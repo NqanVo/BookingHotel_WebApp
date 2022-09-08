@@ -9,7 +9,7 @@ router.post('/:hotelID', verifyAdmin, createRoom)
 // UPDATE
 router.put('/:id', verifyAdmin, updateRoom)
 // DELETE 
-router.delete('/:id', verifyAdmin, deleteRoom)
+router.delete('/:id/:hotelID', verifyAdmin, deleteRoom)
 // GET
 router.get('/:id', getRoom)
 // GET ALL 
