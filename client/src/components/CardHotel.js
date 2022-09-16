@@ -13,7 +13,7 @@ const CardHotel = (props) => {
                 <p>{props.city}</p>
                 <p>Starting from ${props.price}</p>
                 <div className="absolute clipPath top-0 left-0 right-0 w-full h-40 transform translate-y-[-99.5%] bg-white" />
-                <div className="absolute top-[-60px] right-5 z-10 font-bold text-blue-500 flex flex-col items-center">
+                <div className="absolute top-[-60px] right-5 z-10 font-bold text-red-500 flex flex-col items-center">
                     <p className="text-3xl">{props.rating}</p>
                     <p className="">Excellent</p>
                 </div>

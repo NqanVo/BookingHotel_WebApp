@@ -11,7 +11,7 @@ body {
 }
 
 .button {
-  @apply text-white font-medium tracking-wider outline-none py-2 px-5 cursor-pointer bg-gradient-to-r from-[#FFD0FD] to-[#FFEDD8] bg-size200 rounded-lg shadow-sm hover:bg-right ease-in-out duration-500;
+  @apply text-white font-medium tracking-wider outline-none py-2 px-5 cursor-pointer bg-gradient-to-r from-[#FF99E7] to-[#FFD099] bg-size200 rounded-lg shadow-sm hover:bg-right ease-in-out duration-500;
 }
 
 h1 {
@@ -45,4 +45,8 @@ h4 {
 
 .clipPath {
   clip-path: polygon(100% 74%, 0% 100%, 100% 100%);
+}
+
+.text-gradient {
+  @apply bg-gradient-to-r from-[#FF99E7] to-[#FFD099] text-transparent bg-clip-text;
 }
