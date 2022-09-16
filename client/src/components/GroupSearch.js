@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useState } from "react";
 import { IoBedOutline } from "react-icons/io5";
 import { AiTwotoneCalendar, AiOutlineSearch } from "react-icons/ai";
 import { FiUsers } from "react-icons/fi";
@@ -6,10 +6,14 @@ import { format } from "date-fns";
 import { DateRange } from "react-date-range";
 import "react-date-range/dist/styles.css";
 import "react-date-range/dist/theme/default.css";
-
+import { useNavigate } from "react-router-dom";
 
 const GroupSearch = () => {
+    const navigate = useNavigate()
     const [openDate, setOpenDate] = useState(false)
+    const [openOptions, setOpenOptions] = useState(false)
+
+    const [keyWord, setKeyWord] = useState(undefined)
     const [dateRange, setDateRange] = useState([
         {
             startDate: new Date(),
@@ -17,8 +21,6 @@ const GroupSearch = () => {
             key: "selection",
         },
     ]);
-
-    const [openOptions, setOpenOptions] = useState(false)
     const [options, setOptions] = useState({
         adult: 1,
         children: 0,
@@ -69,15 +71,18 @@ const GroupSearch = () => {
         // else
         setOptions({ ...options, room: options.room + 1 })
     }
-
+    const handleSearch = () => {
+        navigate("/hotels", { state: { keyWord, dateRange, options } })
+    }
     return (
-        <div className="flex flex-col gap-2 max-w-md mx-auto text-black/80">
+        <div className="flex flex-col gap-2 max-w-md mx-auto text-black/80 duration-500 ease-in-out">
             <div className="flex gap-2 items-center py-2 px-4 w-full rounded-lg bg-white/80 shadow-sm">
                 <IoBedOutline></IoBedOutline>
                 <input
                     type="text"
                     placeholder="Where are you going?"
                     className="w-full outline-none bg-transparent"
+                    onChange={(e) => setKeyWord(e.target.value)}
                 />
             </div>
             <div className="relative cursor-pointer flex gap-2 items-center py-2 px-4 w-full outline-none rounded-lg bg-white/80 shadow-sm">
@@ -125,7 +130,7 @@ const GroupSearch = () => {
                 </div>)}
             </div>
             <div className="flex gap-2 items-center">
-                <button className="button w-full flex items-center gap-2 justify-center">
+                <button className="button w-full flex items-center gap-2 justify-center" onClick={handleSearch}>
                     <AiOutlineSearch></AiOutlineSearch> Search
                 </button>
             </div>
