@@ -41,11 +41,43 @@ export const getHotel = async (req, res, next) => {
 }
 
 export const getAllHotel = async (req, res, next) => {
-    // const failed = true
-    // if (failed) return next(createError(401, "You are not authen"))
+    const { min, max, ...options } = req.query
     try {
-        const hotels = await Hotel.find()
+        const hotels = await Hotel.find({ ...options, cheapestPrice: { $gt: min || 1, $lt: max || 999999999999 } }).limit(req.query.limit)
         res.status(200).json(hotels)
+    } catch (err) {
+        next(err)
+    }
+}
+
+export const countByCity = async (req, res, next) => {
+    const cities = req.query.cities.split(',')
+    try {
+        const list = await Promise.all(cities.map(city => {
+            return Hotel.countDocuments({ city: city })
+        }))
+        res.status(200).json(list)
+    } catch (err) {
+        next(err)
+    }
+}
+
+export const countByType = async (req, res, next) => {
+    try {
+        const hotelCount = await Hotel.countDocuments({ type: 'hotel' })
+        const apartmentCount = await Hotel.countDocuments({ type: 'apartment' })
+        const villaCount = await Hotel.countDocuments({ type: 'villa' })
+        const resortCount = await Hotel.countDocuments({ type: 'resort' })
+        const cabinCount = await Hotel.countDocuments({ type: 'cabin' })
+
+        res.status(200).json([
+            { type: "hotels", count: hotelCount },
+            { type: "apartments", count: apartmentCount },
+            { type: "villas", count: villaCount },
+            { type: "resorts", count: resortCount },
+            { type: "cabins", count: cabinCount },
+
+        ])
     } catch (err) {
         next(err)
     }
