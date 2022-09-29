@@ -9,6 +9,7 @@ import ListBooking from '../components/ListBooking';
 import Navbar from '../components/Navbar';
 
 const Home = () => {
+    console.log(window.location.href);
     return (
         <div>
             <section className='bg-gradient-to-br from-[#FFD0FD]/50 to-[#FFEDD8]/50'>

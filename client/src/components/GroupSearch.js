@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { IoBedOutline } from "react-icons/io5";
 import { AiTwotoneCalendar, AiOutlineSearch } from "react-icons/ai";
 import { FiUsers } from "react-icons/fi";
@@ -7,6 +7,7 @@ import { DateRange } from "react-date-range";
 import "react-date-range/dist/styles.css";
 import "react-date-range/dist/theme/default.css";
 import { useNavigate } from "react-router-dom";
+import { SearchContext } from "../Context/SearchContext";
 
 const GroupSearch = () => {
     const navigate = useNavigate()
@@ -43,9 +44,6 @@ const GroupSearch = () => {
             setOptions({ ...options, adult: options.adult - 1 })
     }
     const handleSetAdultAdd = () => {
-        // if (options.adult <= 1)
-        //     setOptions({ ...options, adult: 1 })
-        // else
         setOptions({ ...options, adult: options.adult + 1 })
     }
 
@@ -66,12 +64,13 @@ const GroupSearch = () => {
             setOptions({ ...options, room: options.room - 1 })
     }
     const handleSetRoomAdd = () => {
-        // if (options.adult <= 1)
-        //     setOptions({ ...options, adult: 1 })
-        // else
         setOptions({ ...options, room: options.room + 1 })
     }
+
+    const { dispatch } = useContext(SearchContext)
+
     const handleSearch = () => {
+        dispatch({ type: 'NEW_SEARCH', payload: { keyWord, dateRange, options } })
         navigate("/hotels", { state: { keyWord, dateRange, options } })
     }
     return (
