@@ -1,60 +1,42 @@
-import React, { useState, useReducer, useEffect } from 'react';
+import React, { useState, useContext } from 'react';
 import { DateRange } from 'react-date-range';
 import { AiOutlineSearch, AiTwotoneCalendar } from 'react-icons/ai';
 import { IoBedOutline } from 'react-icons/io5';
 import { MdAttachMoney } from 'react-icons/md';
 import { format } from "date-fns";
+import { SearchContext } from '../Context/SearchContext';
+import { useNavigate } from 'react-router-dom';
 
 const GroupSearchDetail = (props) => {
+    const navigate = useNavigate()
+
+    const { dispatch, } = useContext(SearchContext)
+
     const [openSearch, setOpenSearch] = useState(false)
     const [openDate, setOpenDate] = useState(false)
-    const [openOptions, setOpenOptions] = useState(false)
 
     const [keyWord, setKeyWord] = useState(props.keyWord)
-    const [dateRange, setDateRange] = useState(props.dateRange);
+    const [dateRange, setDateRange] = useState(props.dateRange)
     const [options, setOptions] = useState(props.options)
+    const [minPrice, setMinPrice] = useState(undefined)
+    const [maxPrice, setMaxPrice] = useState(undefined)
+
+    const [errorPrice, setErrorPrice] = useState(false)
 
     const handleOpenDate = () => {
         setOpenDate(!openDate)
-        setOpenOptions(false)
-    }
-    const handleOpenOptions = () => {
-        setOpenOptions(!openOptions)
-        setOpenDate(false)
-    }
-    const handleSetAdultRemove = () => {
-        if (options.adult <= 1)
-            setOptions({ ...options, adult: 1 })
-        else
-            setOptions({ ...options, adult: options.adult - 1 })
-    }
-    const handleSetAdultAdd = () => {
-        setOptions({ ...options, adult: options.adult + 1 })
-    }
-    const handleSetChildrenRemove = () => {
-        if (options.children <= 0)
-            setOptions({ ...options, children: 0 })
-        else
-            setOptions({ ...options, children: options.children - 1 })
-    }
-    const handleSetChildrenAdd = () => {
-        setOptions({ ...options, children: options.children + 1 })
-    }
-    const handleSetRoomRemove = () => {
-        if (options.room <= 1)
-            setOptions({ ...options, room: 1 })
-        else
-            setOptions({ ...options, room: options.room - 1 })
-    }
-    const handleSetRoomAdd = () => {
-        setOptions({ ...options, room: options.room + 1 })
     }
 
-    const contentSearch = (keyWord, dateRange, options) => {
-        props.handleGetContentSearch(keyWord, dateRange, options)
+    const contentSearch = (keyWord, dateRange, options, minPrice, maxPrice) => {
+        dispatch({ type: 'NEW_SEARCH', payload: { keyWord, dateRange, options } })
+        navigate("/hotels", { state: { keyWord, dateRange, options } })
+        if (minPrice >= maxPrice && (minPrice !== '' && maxPrice !== ''))
+            setErrorPrice(true)
+        else {
+            setErrorPrice(false)
+            props.handleGetContentSearch(keyWord, dateRange, options, minPrice, maxPrice)
+        }
     }
-
-
     return (
         <div className={`${openSearch ? 'w-[80%]' : 'w-[60px]'} absolute top-2 left-2 h-max lg:w-full lg:static lg:col-span-1 p-2 shadow-lg rounded-lg bg-gradient-to-br from-[#FFD0FD] to-[#FFEDD8]`}>
             <AiOutlineSearch className=' text-3xl mx-auto block w-full cursor-pointer' onClick={() => setOpenSearch(!openSearch)}></AiOutlineSearch>
@@ -97,6 +79,7 @@ const GroupSearchDetail = (props) => {
                                 className="w-full outline-none bg-transparent"
                                 placeholder={options.adult}
                                 min={1}
+                                onChange={(e) => setOptions({ ...options, adult: e.target.value })}
                             />
                         </div>
                         <div className="flex gap-2 items-center py-2 px-4 w-full rounded-lg bg-white/80 shadow-sm">
@@ -106,6 +89,7 @@ const GroupSearchDetail = (props) => {
                                 className="w-full outline-none bg-transparent"
                                 placeholder={options.children}
                                 min={0}
+                                onChange={(e) => setOptions({ ...options, children: e.target.value })}
                             />
                         </div>
                         <div className="flex gap-2 items-center py-2 px-4 w-full rounded-lg bg-white/80 shadow-sm">
@@ -115,6 +99,7 @@ const GroupSearchDetail = (props) => {
                                 className="w-full outline-none bg-transparent"
                                 placeholder={options.room}
                                 min={1}
+                                onChange={(e) => setOptions({ ...options, room: e.target.value })}
                             />
                         </div>
                     </div>
@@ -125,7 +110,9 @@ const GroupSearchDetail = (props) => {
                             <input
                                 type="number"
                                 className="w-full outline-none bg-transparent"
-                                placeholder='......'
+                                placeholder={minPrice}
+                                min={0}
+                                onChange={(e) => setMinPrice(e.target.value)}
                             />
                         </div>
                         <div className="flex gap-2 items-center py-2 px-4 w-full rounded-lg bg-white/80 shadow-sm">
@@ -133,12 +120,15 @@ const GroupSearchDetail = (props) => {
                             <input
                                 type="number"
                                 className="w-full outline-none bg-transparent"
-                                placeholder='......'
+                                placeholder={maxPrice}
+                                min={0}
+                                onChange={(e) => setMaxPrice(e.target.value)}
                             />
                         </div>
+                        {errorPrice && <span className='text-red-500 text-sm'>Max price must be greater than min price</span>}
                     </div>
                     <button className="button w-max mx-auto flex items-center gap-2 justify-center"
-                        onClick={() => contentSearch(keyWord, dateRange, options)}
+                        onClick={() => contentSearch(keyWord, dateRange, options, minPrice, maxPrice)}
                     >
                         <AiOutlineSearch></AiOutlineSearch> Search
                     </button>

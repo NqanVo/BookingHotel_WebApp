@@ -12,6 +12,7 @@ const FeaturedProperties = () => {
                 {data.map((item) => (
                     <CardHotel
                         key={item._id}
+                        id={item._id}
                         image={item.photos[0]}
                         title={item.name}
                         city={item.city}
